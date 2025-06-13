@@ -1,0 +1,28 @@
+{
+  "name": "vidlyzerbot",
+  "version": "1.0.0",
+  "description": "Discord bot dengan struktur modular",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "deploy": "node deploy/deploy-commands.js",
+    "deploy:global": "node deploy/deploy-commands.js global",
+    "deploy:guild": "node deploy/deploy-commands.js guild",
+    "clear:global": "node deploy/clear-guild-commands.js global",
+    "clear:guild": "node deploy/clear-guild-commands.js guild"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.19.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

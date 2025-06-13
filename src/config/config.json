@@ -1,0 +1,10 @@
+{
+  "token": "MTIzOTM2NTg0MzczODE2OTQyNA.GKhwLl.WYxqPNX-sraINFdeEdaJfHY3JYDNMiybHTmaJo",
+  "clientId": "1239365843738169424",
+  "guildId": "739365630251237446",
+  "prefix": "!",
+  "defaultStatus": {
+    "type": "watching",
+    "activity": "vidlyzer"
+  }
+}
