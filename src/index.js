@@ -1,7 +1,10 @@
+// Load environment variables first
+require('dotenv').config();
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const config = require('./config/config.json');
+const config = require('./config');
 
 const client = new Client({
     intents: [
@@ -15,4 +18,6 @@ const client = new Client({
 require('./handlers/commandhandler')(client);
 require('./handlers/eventhandler')(client);
 
+// Login dengan token dari environment variables atau config
+console.log('🚀 Starting VidlyzerBot...');
 client.login(config.token);

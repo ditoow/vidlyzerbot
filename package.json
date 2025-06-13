@@ -10,7 +10,8 @@
     "deploy:global": "node deploy/deploy-commands.js global",
     "deploy:guild": "node deploy/deploy-commands.js guild",
     "clear:global": "node deploy/clear-guild-commands.js global",
-    "clear:guild": "node deploy/clear-guild-commands.js guild"
+    "clear:guild": "node deploy/clear-guild-commands.js guild",
+    "verify": "node verify-env.js"
   },
   "keywords": [
     "discord",
