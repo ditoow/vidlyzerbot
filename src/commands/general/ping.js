@@ -5,6 +5,6 @@ module.exports = {
         .setName('ping')
         .setDescription('Cek latency bot'),
     async execute(interaction) {
-        await interaction.reply(`Pong! Latency: ${Date.now() - interaction.createdTimestamp}ms`);
+        await interaction.reply(`Pongping! Latency: ${Date.now() - interaction.createdTimestamp}ms`);
     },
 };
