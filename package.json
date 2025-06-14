@@ -10,6 +10,7 @@
     "deploy": "node deploy/deploy-commands.js",
     "deploy:global": "node deploy/deploy-commands.js global",
     "deploy:guild": "node deploy/deploy-commands.js guild",
+    "deploy:simple": "node deploy-simple.js",
     "clear:global": "node deploy/clear-guild-commands.js global",
     "clear:guild": "node deploy/clear-guild-commands.js guild",
     "auto-deploy": "node scripts/auto-deploy-standalone.js",

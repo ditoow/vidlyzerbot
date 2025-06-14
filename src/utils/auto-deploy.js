@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REST, Routes } = require('discord.js');
-const config = require('../config/config.json');
+const config = require('../config');
 
 class AutoDeploy {
     constructor() {
@@ -27,74 +27,87 @@ class AutoDeploy {
 
     // Update command hashes
     updateCommandHashes() {
-        const categories = fs.readdirSync(this.commandsPath);
-        
-        categories.forEach(category => {
-            const categoryPath = path.join(this.commandsPath, category);
-            if (fs.lstatSync(categoryPath).isDirectory()) {
-                const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
-                
-                commandFiles.forEach(file => {
-                    const filePath = path.join(categoryPath, file);
-                    const hash = this.generateFileHash(filePath);
-                    this.commandHashes.set(filePath, hash);
-                });
-            }
-        });
+        try {
+            const categories = fs.readdirSync(this.commandsPath);
+            
+            categories.forEach(category => {
+                const categoryPath = path.join(this.commandsPath, category);
+                if (fs.lstatSync(categoryPath).isDirectory()) {
+                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+                    
+                    commandFiles.forEach(file => {
+                        const filePath = path.join(categoryPath, file);
+                        const hash = this.generateFileHash(filePath);
+                        this.commandHashes.set(filePath, hash);
+                    });
+                }
+            });
+        } catch (error) {
+            // Error updating hashes
+        }
     }
 
     // Check apakah ada perubahan command
     hasCommandChanges() {
-        const categories = fs.readdirSync(this.commandsPath);
-        let hasChanges = false;
-        
-        categories.forEach(category => {
-            const categoryPath = path.join(this.commandsPath, category);
-            if (fs.lstatSync(categoryPath).isDirectory()) {
-                const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
-                
-                commandFiles.forEach(file => {
-                    const filePath = path.join(categoryPath, file);
-                    const currentHash = this.generateFileHash(filePath);
-                    const oldHash = this.commandHashes.get(filePath);
+        try {
+            const categories = fs.readdirSync(this.commandsPath);
+            let hasChanges = false;
+            
+            categories.forEach(category => {
+                const categoryPath = path.join(this.commandsPath, category);
+                if (fs.lstatSync(categoryPath).isDirectory()) {
+                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
                     
-                    if (currentHash !== oldHash) {
-                        hasChanges = true;
-                    }
-                });
-            }
-        });
-        
-        return hasChanges;
+                    commandFiles.forEach(file => {
+                        const filePath = path.join(categoryPath, file);
+                        const currentHash = this.generateFileHash(filePath);
+                        const oldHash = this.commandHashes.get(filePath);
+                        
+                        if (currentHash !== oldHash) {
+                            hasChanges = true;
+                        }
+                    });
+                }
+            });
+            
+            return hasChanges;
+        } catch (error) {
+            return false;
+        }
     }
 
     // Load semua commands
     loadCommands() {
         const commands = [];
-        const categories = fs.readdirSync(this.commandsPath);
         
-        categories.forEach(category => {
-            const categoryPath = path.join(this.commandsPath, category);
-            if (fs.lstatSync(categoryPath).isDirectory()) {
-                const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
-                
-                commandFiles.forEach(file => {
-                    const filePath = path.join(categoryPath, file);
+        try {
+            const categories = fs.readdirSync(this.commandsPath);
+            
+            categories.forEach(category => {
+                const categoryPath = path.join(this.commandsPath, category);
+                if (fs.lstatSync(categoryPath).isDirectory()) {
+                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
                     
-                    // Clear require cache untuk reload command
-                    delete require.cache[require.resolve(filePath)];
-                    
-                    try {
-                        const command = require(filePath);
-                        if ('data' in command && 'execute' in command) {
-                            commands.push(command.data.toJSON());
+                    commandFiles.forEach(file => {
+                        const filePath = path.join(categoryPath, file);
+                        
+                        // Clear require cache untuk reload command
+                        delete require.cache[require.resolve(filePath)];
+                        
+                        try {
+                            const command = require(filePath);
+                            if ('data' in command && 'execute' in command) {
+                                commands.push(command.data.toJSON());
+                            }
+                        } catch (error) {
+                            // Error loading command
                         }
-                    } catch (error) {
-                        // Error loading command
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        } catch (error) {
+            // Error loading commands
+        }
         
         return commands;
     }
@@ -114,7 +127,16 @@ class AutoDeploy {
         this.lastDeployTime = now;
 
         try {
+            // Validate config
+            if (!config.token || !config.clientId) {
+                return false;
+            }
+
             const commands = this.loadCommands();
+            if (commands.length === 0) {
+                return false;
+            }
+
             const rest = new REST().setToken(config.token);
 
             let data;
@@ -143,30 +165,34 @@ class AutoDeploy {
 
     // Start watching untuk perubahan
     startWatching(deployType = 'guild') {
-        // Check setiap 3 detik
-        setInterval(async () => {
-            if (this.hasCommandChanges()) {
-                await this.deployCommands(deployType);
-            }
-        }, 3000);
+        try {
+            // Check setiap 3 detik
+            setInterval(async () => {
+                if (this.hasCommandChanges()) {
+                    await this.deployCommands(deployType);
+                }
+            }, 3000);
 
-        // Watch file system changes (backup method)
-        const categories = fs.readdirSync(this.commandsPath);
-        categories.forEach(category => {
-            const categoryPath = path.join(this.commandsPath, category);
-            if (fs.lstatSync(categoryPath).isDirectory()) {
-                fs.watch(categoryPath, { recursive: true }, async (eventType, filename) => {
-                    if (filename && filename.endsWith('.js')) {
-                        // Delay sedikit untuk memastikan file sudah selesai ditulis
-                        setTimeout(async () => {
-                            if (this.hasCommandChanges()) {
-                                await this.deployCommands(deployType);
-                            }
-                        }, 1000);
-                    }
-                });
-            }
-        });
+            // Watch file system changes (backup method)
+            const categories = fs.readdirSync(this.commandsPath);
+            categories.forEach(category => {
+                const categoryPath = path.join(this.commandsPath, category);
+                if (fs.lstatSync(categoryPath).isDirectory()) {
+                    fs.watch(categoryPath, { recursive: true }, async (eventType, filename) => {
+                        if (filename && filename.endsWith('.js')) {
+                            // Delay sedikit untuk memastikan file sudah selesai ditulis
+                            setTimeout(async () => {
+                                if (this.hasCommandChanges()) {
+                                    await this.deployCommands(deployType);
+                                }
+                            }, 1000);
+                        }
+                    });
+                }
+            });
+        } catch (error) {
+            // Error starting watcher
+        }
     }
 
     // Manual deploy
