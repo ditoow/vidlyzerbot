@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:pterodactyl": "node start-pterodactyl.js",
     "dev": "nodemon src/index.js",
     "deploy": "node deploy/deploy-commands.js",
     "deploy:global": "node deploy/deploy-commands.js global",
