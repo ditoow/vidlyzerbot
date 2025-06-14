@@ -11,7 +11,10 @@
     "deploy:guild": "node deploy/deploy-commands.js guild",
     "clear:global": "node deploy/clear-guild-commands.js global",
     "clear:guild": "node deploy/clear-guild-commands.js guild",
-    "verify": "node verify-env.js"
+    "auto-deploy": "node scripts/auto-deploy-standalone.js",
+    "auto-deploy:guild": "node scripts/auto-deploy-standalone.js guild",
+    "auto-deploy:global": "node scripts/auto-deploy-standalone.js global",
+    "dev:auto": "concurrently \"npm run dev\" \"npm run auto-deploy:guild\""
   },
   "keywords": [
     "discord",

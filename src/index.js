@@ -5,6 +5,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
+const AutoDeploy = require('./utils/auto-deploy');
 
 const client = new Client({
     intents: [
@@ -14,10 +15,28 @@ const client = new Client({
     ]
 });
 
+// Initialize Auto Deploy
+const autoDeploy = new AutoDeploy();
+
 // Load Handlers
+console.log('hanlder loaded (commandhandler.js, eventhandler.js)');
 require('./handlers/commandhandler')(client);
 require('./handlers/eventhandler')(client);
 
+// Start auto-deploy setelah bot ready
+client.once('ready', () => {
+    // Check environment variable untuk auto-deploy
+    const enableAutoDeploy = process.env.AUTO_DEPLOY === 'true' || process.env.AUTO_DEPLOY === '1';
+    const deployType = process.env.AUTO_DEPLOY_TYPE || 'guild';
+    
+    if (enableAutoDeploy) {
+        console.log('script autodploy berjalan');
+        autoDeploy.startWatching(deployType);
+    }
+});
+
+// Export autoDeploy untuk manual trigger
+client.autoDeploy = autoDeploy;
+
 // Login dengan token dari environment variables atau config
-console.log('🚀 Starting VidlyzerBot...');
 client.login(config.token);

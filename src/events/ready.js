@@ -5,7 +5,7 @@ module.exports = {
     name: 'ready',
     once: true,
     execute(client) {
-        console.log(`Bot siap! Login sebagai ${client.user.tag}`);
+        console.log(`bot aktif ${client.user.tag}`);
         
         // Mapping tipe aktivitas (sama seperti di admin/status.js)
         const activityTypes = {
@@ -22,12 +22,8 @@ module.exports = {
             
             if (activityType) {
                 client.user.setActivity(activity, { type: activityType });
-                console.log(`Status bot diatur: ${type.charAt(0).toUpperCase() + type.slice(1)} ${activity}`);
-            } else {
-                console.log('Tipe aktivitas tidak valid di config, menggunakan status default');
+                console.log(`status bot ${type} ${activity}`);
             }
-        } else {
-            console.log('Tidak ada status default yang diatur di config');
         }
     },
 };

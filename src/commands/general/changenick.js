@@ -31,7 +31,6 @@ module.exports = {
                 ephemeral: true
             });
         } catch (error) {
-            console.error('Error changing nickname:', error);
             
             if (error.code === 50013) {
                 await interaction.reply({

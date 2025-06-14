@@ -21,13 +21,11 @@ module.exports = (client) => {
                 // Set a new item in the Collection with the key as the command name and the value as the exported module
                 if ('data' in command && 'execute' in command) {
                     client.commands.set(command.data.name, command);
-                    console.log(`[COMMAND] Loaded ${command.data.name} from ${category} category`);
-                } else {
-                    console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+                    console.log(`${category} commands loaded (${file})`);
                 }
             }
         }
     });
     
-    console.log(`[COMMAND HANDLER] Loaded ${client.commands.size} commands`);
+    console.log(`slash commands loaded`);
 };

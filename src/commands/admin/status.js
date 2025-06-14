@@ -40,7 +40,6 @@ module.exports = {
                 ephemeral: true
             });
         } catch (error) {
-            console.error('Error setting status:', error);
             await interaction.reply({
                 content: '❌ Terjadi kesalahan saat mengatur status bot.',
                 ephemeral: true

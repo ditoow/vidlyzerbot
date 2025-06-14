@@ -11,12 +11,9 @@ module.exports = (client) => {
         
         if (event.once) {
             client.once(event.name, (...args) => event.execute(...args, client));
-            console.log(`[EVENT] Loaded ${event.name} (once)`);
         } else {
             client.on(event.name, (...args) => event.execute(...args, client));
-            console.log(`[EVENT] Loaded ${event.name}`);
         }
+        console.log(`events loaded (${file})`);
     }
-    
-    console.log(`[EVENT HANDLER] Loaded ${eventFiles.length} events`);
 };

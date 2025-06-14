@@ -6,15 +6,12 @@ module.exports = {
         const command = client.commands.get(interaction.commandName);
 
         if (!command) {
-            console.error(`No command matching ${interaction.commandName} was found.`);
             return;
         }
 
         try {
             await command.execute(interaction);
-            console.log(`[COMMAND] ${interaction.user.tag} executed /${interaction.commandName}`);
         } catch (error) {
-            console.error(`[ERROR] Error executing ${interaction.commandName}:`, error);
             
             const errorMessage = 'There was an error while executing this command!';
             
