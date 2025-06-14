@@ -2,10 +2,10 @@
   "name": "vidlyzerbot",
   "version": "1.0.0",
   "description": "Discord bot dengan struktur modular",
-  "main": "src/index.js",
+  "main": "start.js",
   "scripts": {
-    "start": "node src/index.js",
-    "start:pterodactyl": "node start-pterodactyl.js",
+    "start": "node start.js",
+    "bot": "node src/index.js",
     "dev": "nodemon src/index.js",
     "deploy": "node deploy/deploy-commands.js",
     "deploy:global": "node deploy/deploy-commands.js global",
@@ -14,8 +14,7 @@
     "clear:guild": "node deploy/clear-guild-commands.js guild",
     "auto-deploy": "node scripts/auto-deploy-standalone.js",
     "auto-deploy:guild": "node scripts/auto-deploy-standalone.js guild",
-    "auto-deploy:global": "node scripts/auto-deploy-standalone.js global",
-    "dev:auto": "concurrently \"npm run dev\" \"npm run auto-deploy:guild\""
+    "auto-deploy:global": "node scripts/auto-deploy-standalone.js global"
   },
   "keywords": [
     "discord",
