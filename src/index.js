@@ -8,11 +8,7 @@ const config = require('./config');
 const AutoDeploy = require('./utils/auto-deploy');
 
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
-    ]
+  intents: Object.values(GatewayIntentBits)
 });
 
 // Initialize Auto Deploy
