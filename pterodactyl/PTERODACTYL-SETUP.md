@@ -24,14 +24,19 @@ AUTO_DEPLOY=false
 
 Gunakan salah satu startup command berikut:
 
-#### **Opsi A: Auto-Deploy on Startup (Recommended)**
-```bash
-npm run start:pterodactyl
-```
-
-#### **Opsi B: Regular Start**
+#### **Opsi A: Default Start (Recommended)**
 ```bash
 npm start
+```
+
+#### **Opsi B: Pterodactyl Simple**
+```bash
+npm run pterodactyl:simple
+```
+
+#### **Opsi C: Pterodactyl Advanced**
+```bash
+npm run pterodactyl:advanced
 ```
 
 ## ⚙️ Konfigurasi Environment Variables
@@ -62,28 +67,37 @@ Ketika `AUTO_DEPLOY=true`:
 
 ## 📋 Startup Options
 
-### **1. Pterodactyl Script (`start:pterodactyl`)**
-```bash
-npm run start:pterodactyl
-```
-**Fitur:**
-- ✅ Auto-deploy on startup
-- ✅ Graceful shutdown handling
-- ✅ Error handling
-- ✅ Detailed logging
-
-### **2. Regular Start (`start`)**
+### **1. Default Start (`npm start`)**
 ```bash
 npm start
 ```
 **Fitur:**
-- ✅ Deploy on startup (jika enabled)
-- ✅ File watching (jika enabled)
-- ✅ Standard bot startup
+- ✅ Auto-deploy on startup
+- ✅ Unified deploy system
+- ✅ Error handling
+- ✅ Simple and reliable
+
+### **2. Pterodactyl Simple (`npm run pterodactyl:simple`)**
+```bash
+npm run pterodactyl:simple
+```
+**Fitur:**
+- ✅ Minimal dependencies
+- ✅ Clean error handling
+- ✅ Fast startup
+
+### **3. Pterodactyl Advanced (`npm run pterodactyl:advanced`)**
+```bash
+npm run pterodactyl:advanced
+```
+**Fitur:**
+- ✅ Detailed logging
+- ✅ Process management
+- ✅ Graceful shutdown
 
 ## 🛠️ Manual Deploy Options
 
-Folder `deploy/` tetap tersedia untuk manual deployment:
+Unified deploy system tersedia:
 
 ```bash
 # Guild commands (fast)
@@ -94,6 +108,11 @@ npm run deploy:global
 
 # Auto-detect
 npm run deploy
+
+# Clear commands
+npm run clear:guild
+npm run clear:global
+npm run clear:all
 ```
 
 ## 📊 Recommended Settings

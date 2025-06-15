@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-// Pterodactyl startup script with auto-deploy
+// Advanced Pterodactyl startup script with auto-deploy
 // This script will deploy commands and then start the bot
 
 require('dotenv').config();
 const { spawn } = require('child_process');
-const AutoDeploy = require('./src/utils/auto-deploy');
+const AutoDeploy = require('../src/utils/auto-deploy');
 
 async function startBot() {
     console.log('='.repeat(50));
-    console.log('🚀 PTERODACTYL BOT STARTUP');
+    console.log('🚀 PTERODACTYL BOT STARTUP (ADVANCED)');
     console.log('='.repeat(50));
     
     // Check if deploy on startup is enabled

@@ -14,14 +14,9 @@ if [ "$DEPLOY_ON_STARTUP" = "true" ] || [ "$DEPLOY_ON_STARTUP" = "1" ]; then
     # Determine deploy type
     DEPLOY_TYPE=${AUTO_DEPLOY_TYPE:-guild}
     
-    # Run deployment
-    if [ "$DEPLOY_TYPE" = "global" ]; then
-        echo "📡 Deploying global commands..."
-        npm run deploy:global
-    else
-        echo "🏠 Deploying guild commands..."
-        npm run deploy:guild
-    fi
+    # Run deployment using unified deploy script
+    echo "📡 Running deployment..."
+    node deploy/deploy-unified.js $DEPLOY_TYPE
     
     echo "✅ Deploy completed!"
     echo ""

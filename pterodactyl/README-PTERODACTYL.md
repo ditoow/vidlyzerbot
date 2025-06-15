@@ -28,10 +28,14 @@ npm start
 ## 🔧 Commands Available
 
 ```bash
-npm start          # Start dengan auto-deploy
-npm run bot        # Start bot langsung (tanpa deploy)
-npm run deploy     # Manual deploy
-npm run dev        # Development mode
+npm start                    # Start dengan auto-deploy
+npm run bot                  # Start bot langsung (tanpa deploy)
+npm run deploy               # Manual deploy (unified)
+npm run deploy:guild         # Deploy guild commands
+npm run deploy:global        # Deploy global commands
+npm run pterodactyl:simple   # Pterodactyl simple start
+npm run pterodactyl:advanced # Pterodactyl advanced start
+npm run dev                  # Development mode
 ```
 
 ## 📋 Environment Variables
@@ -62,8 +66,8 @@ git pull
 ```
 
 ### NPM Script Error
-- Gunakan `npm start` (bukan `npm run start:pterodactyl`)
-- Script sudah disederhanakan untuk kompatibilitas
+- Gunakan `npm start` (recommended)
+- Semua script sudah unified
 
 ### Commands Not Working
 1. Check environment variables
@@ -83,7 +87,9 @@ bot aktif BotName#1234
 
 ## 🚨 Important
 
-- **Folder deploy/** tetap ada untuk manual deployment
+- **Unified deploy system** - semua deploy methods digabung
+- **Folder deploy/** berisi deploy-unified.js
+- **Folder pterodactyl/** berisi semua file pterodactyl
 - **Guild commands** update langsung
 - **Global commands** butuh 1 jam
 - **Auto-deploy** berjalan saat startup saja

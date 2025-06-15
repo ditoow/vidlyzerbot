@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// Main startup script
-// Handles auto-deploy and bot startup
+// Simple Pterodactyl startup script
+// Handles auto-deploy and bot startup with minimal dependencies
 
 require('dotenv').config();
 
@@ -13,7 +13,7 @@ async function startBot() {
         console.log('deploying commands on startup...');
         
         try {
-            const { deploySimple } = require('./deploy/deploy-unified');
+            const { deploySimple } = require('../deploy/deploy-unified');
             const success = await deploySimple();
             
             if (!success) {
@@ -25,7 +25,7 @@ async function startBot() {
     }
     
     // Start the main bot
-    require('./src/index.js');
+    require('../src/index.js');
 }
 
 startBot().catch(error => {
