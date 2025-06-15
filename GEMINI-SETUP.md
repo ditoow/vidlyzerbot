@@ -35,7 +35,7 @@ Tambahkan environment variables berikut:
 GEMINI_API_KEY=your_gemini_api_key_here
 
 # Optional - Model Configuration
-GEMINI_MODEL=gemini-pro                 # Default: gemini-pro
+GEMINI_MODEL=gemini-1.5-flash           # Default: gemini-1.5-flash
 GEMINI_MAX_TOKENS=1000                  # Default: 1000
 GEMINI_TEMPERATURE=0.7                  # Default: 0.7
 ```
@@ -89,8 +89,9 @@ const GEMINI_CHANNEL_ID = 'your_channel_id_here';
 ## 🔧 Konfigurasi Model
 
 ### Model Options
-- `gemini-pro` (Default, gratis, sangat bagus)
-- `gemini-pro-vision` (Untuk gambar, belum diimplementasi)
+- `gemini-1.5-flash` (Default, gratis, cepat dan efisien)
+- `gemini-1.5-pro` (Lebih pintar, tapi lebih lambat)
+- `gemini-2.0-flash` (Terbaru, paling canggih)
 
 ### Temperature (0.0 - 1.0)
 - `0.0`: Sangat konsisten, deterministik

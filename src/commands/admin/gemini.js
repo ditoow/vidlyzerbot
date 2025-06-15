@@ -57,7 +57,7 @@ module.exports = {
 
 async function handleStatus(interaction) {
     const isConfigured = geminiAI.isConfigured();
-    const model = process.env.GEMINI_MODEL || 'gemini-pro';
+    const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
     const maxTokens = process.env.GEMINI_MAX_TOKENS || '1000';
     const temperature = process.env.GEMINI_TEMPERATURE || '0.7';
     
