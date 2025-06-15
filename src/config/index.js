@@ -24,6 +24,7 @@ const config = {
     clientId: process.env.CLIENT_ID || fileConfig.clientId || '',
     guildId: process.env.GUILD_ID || fileConfig.guildId || '',
     prefix: process.env.PREFIX || fileConfig.prefix || '!',
+    geminiApiKey: process.env.GEMINI_API_KEY || fileConfig.geminiApiKey || '',
     defaultStatus: {
         type: process.env.DEFAULT_STATUS_TYPE || fileConfig.defaultStatus?.type || 'watching',
         activity: process.env.DEFAULT_STATUS_ACTIVITY || fileConfig.defaultStatus?.activity || 'server ini'
@@ -34,5 +35,6 @@ const config = {
 console.log(`loaded token ${config.token ? '✓' : '✗'}`);
 console.log(`loaded clientid ${config.clientId ? '✓' : '✗'}`);
 console.log(`loaded guildid ${config.guildId ? '✓' : '✗'}`);
+console.log(`loaded gemini api key ${config.geminiApiKey ? '✓' : '✗'}`);
 
 module.exports = config;
