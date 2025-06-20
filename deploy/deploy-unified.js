@@ -31,36 +31,59 @@ class DeployManager {
         }
     }
 
-    // Load all commands from src/commands
+    // Load all commands from src/commands and src/features
     loadCommands() {
         try {
-            const commandsPath = path.join(__dirname, '../src/commands');
-            const categories = fs.readdirSync(commandsPath);
+            // Load commands from main commands directory
+            this.loadCommandsFromDirectory(path.join(__dirname, '../src/commands'));
             
-            for (const category of categories) {
-                const categoryPath = path.join(commandsPath, category);
-                if (fs.lstatSync(categoryPath).isDirectory()) {
-                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+            // Load commands from features directory
+            const featuresPath = path.join(__dirname, '../src/features');
+            if (fs.existsSync(featuresPath)) {
+                const featureDirectories = fs.readdirSync(featuresPath);
+                
+                for (const featureDir of featureDirectories) {
+                    const featurePath = path.join(featuresPath, featureDir);
+                    const featureCommandsPath = path.join(featurePath, 'commands');
                     
-                    for (const file of commandFiles) {
-                        const filePath = path.join(categoryPath, file);
-                        try {
-                            // Clear require cache for fresh load
-                            delete require.cache[require.resolve(filePath)];
-                            
-                            const command = require(filePath);
-                            if ('data' in command && 'execute' in command) {
-                                this.commands.push(command.data.toJSON());
-                            }
-                        } catch (error) {
-                            console.log(`warning - failed to load command: ${file}`);
-                        }
+                    if (fs.existsSync(featureCommandsPath)) {
+                        this.loadCommandsFromDirectory(featureCommandsPath);
                     }
                 }
             }
         } catch (error) {
             console.log('deploy failed - cannot load commands');
             process.exit(1);
+        }
+    }
+
+    // Helper method to load commands from a directory
+    loadCommandsFromDirectory(directory) {
+        if (!fs.existsSync(directory)) return;
+        
+        const items = fs.readdirSync(directory);
+        
+        for (const item of items) {
+            const itemPath = path.join(directory, item);
+            const stat = fs.statSync(itemPath);
+            
+            if (stat.isDirectory()) {
+                // Recursively load commands from subdirectories
+                this.loadCommandsFromDirectory(itemPath);
+            } else if (item.endsWith('.js')) {
+                try {
+                    // Clear require cache for fresh load
+                    delete require.cache[require.resolve(itemPath)];
+                    
+                    const command = require(itemPath);
+                    if ('data' in command && 'execute' in command) {
+                        this.commands.push(command.data.toJSON());
+                        console.log(`loaded command: ${command.data.name}`);
+                    }
+                } catch (error) {
+                    console.log(`warning - failed to load command: ${item} - ${error.message}`);
+                }
+            }
         }
     }
 
