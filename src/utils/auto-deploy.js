@@ -6,6 +6,7 @@ const config = require('../config');
 class AutoDeploy {
     constructor() {
         this.commandsPath = path.join(__dirname, '../commands');
+        this.featuresPath = path.join(__dirname, '../features');
         this.lastDeployTime = 0;
         this.deployCooldown = 5000; // 5 detik cooldown
         this.isDeploying = false;
@@ -28,20 +29,43 @@ class AutoDeploy {
     // Update command hashes
     updateCommandHashes() {
         try {
-            const categories = fs.readdirSync(this.commandsPath);
+            // Update hashes for main commands directory
+            if (fs.existsSync(this.commandsPath)) {
+                const categories = fs.readdirSync(this.commandsPath);
+                
+                categories.forEach(category => {
+                    const categoryPath = path.join(this.commandsPath, category);
+                    if (fs.lstatSync(categoryPath).isDirectory()) {
+                        const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+                        
+                        commandFiles.forEach(file => {
+                            const filePath = path.join(categoryPath, file);
+                            const hash = this.generateFileHash(filePath);
+                            this.commandHashes.set(filePath, hash);
+                        });
+                    }
+                });
+            }
             
-            categories.forEach(category => {
-                const categoryPath = path.join(this.commandsPath, category);
-                if (fs.lstatSync(categoryPath).isDirectory()) {
-                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+            // Update hashes for features directory
+            if (fs.existsSync(this.featuresPath)) {
+                const featureDirectories = fs.readdirSync(this.featuresPath);
+                
+                featureDirectories.forEach(featureDir => {
+                    const featurePath = path.join(this.featuresPath, featureDir);
+                    const featureCommandsPath = path.join(featurePath, 'commands');
                     
-                    commandFiles.forEach(file => {
-                        const filePath = path.join(categoryPath, file);
-                        const hash = this.generateFileHash(filePath);
-                        this.commandHashes.set(filePath, hash);
-                    });
-                }
-            });
+                    if (fs.existsSync(featureCommandsPath) && fs.lstatSync(featureCommandsPath).isDirectory()) {
+                        const commandFiles = fs.readdirSync(featureCommandsPath).filter(file => file.endsWith('.js'));
+                        
+                        commandFiles.forEach(file => {
+                            const filePath = path.join(featureCommandsPath, file);
+                            const hash = this.generateFileHash(filePath);
+                            this.commandHashes.set(filePath, hash);
+                        });
+                    }
+                });
+            }
         } catch (error) {
             // Error updating hashes
         }
@@ -50,25 +74,53 @@ class AutoDeploy {
     // Check apakah ada perubahan command
     hasCommandChanges() {
         try {
-            const categories = fs.readdirSync(this.commandsPath);
             let hasChanges = false;
             
-            categories.forEach(category => {
-                const categoryPath = path.join(this.commandsPath, category);
-                if (fs.lstatSync(categoryPath).isDirectory()) {
-                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
-                    
-                    commandFiles.forEach(file => {
-                        const filePath = path.join(categoryPath, file);
-                        const currentHash = this.generateFileHash(filePath);
-                        const oldHash = this.commandHashes.get(filePath);
+            // Check main commands directory
+            if (fs.existsSync(this.commandsPath)) {
+                const categories = fs.readdirSync(this.commandsPath);
+                
+                categories.forEach(category => {
+                    const categoryPath = path.join(this.commandsPath, category);
+                    if (fs.lstatSync(categoryPath).isDirectory()) {
+                        const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
                         
-                        if (currentHash !== oldHash) {
-                            hasChanges = true;
-                        }
-                    });
-                }
-            });
+                        commandFiles.forEach(file => {
+                            const filePath = path.join(categoryPath, file);
+                            const currentHash = this.generateFileHash(filePath);
+                            const oldHash = this.commandHashes.get(filePath);
+                            
+                            if (currentHash !== oldHash) {
+                                hasChanges = true;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Check features directory
+            if (fs.existsSync(this.featuresPath)) {
+                const featureDirectories = fs.readdirSync(this.featuresPath);
+                
+                featureDirectories.forEach(featureDir => {
+                    const featurePath = path.join(this.featuresPath, featureDir);
+                    const featureCommandsPath = path.join(featurePath, 'commands');
+                    
+                    if (fs.existsSync(featureCommandsPath) && fs.lstatSync(featureCommandsPath).isDirectory()) {
+                        const commandFiles = fs.readdirSync(featureCommandsPath).filter(file => file.endsWith('.js'));
+                        
+                        commandFiles.forEach(file => {
+                            const filePath = path.join(featureCommandsPath, file);
+                            const currentHash = this.generateFileHash(filePath);
+                            const oldHash = this.commandHashes.get(filePath);
+                            
+                            if (currentHash !== oldHash) {
+                                hasChanges = true;
+                            }
+                        });
+                    }
+                });
+            }
             
             return hasChanges;
         } catch (error) {
@@ -81,32 +133,65 @@ class AutoDeploy {
         const commands = [];
         
         try {
-            const categories = fs.readdirSync(this.commandsPath);
-            
-            categories.forEach(category => {
-                const categoryPath = path.join(this.commandsPath, category);
-                if (fs.lstatSync(categoryPath).isDirectory()) {
-                    const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
-                    
-                    commandFiles.forEach(file => {
-                        const filePath = path.join(categoryPath, file);
+            // Load commands from main commands directory
+            if (fs.existsSync(this.commandsPath)) {
+                const categories = fs.readdirSync(this.commandsPath);
+                
+                categories.forEach(category => {
+                    const categoryPath = path.join(this.commandsPath, category);
+                    if (fs.lstatSync(categoryPath).isDirectory()) {
+                        const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
                         
-                        // Clear require cache untuk reload command
-                        delete require.cache[require.resolve(filePath)];
-                        
-                        try {
-                            const command = require(filePath);
-                            if ('data' in command && 'execute' in command) {
-                                commands.push(command.data.toJSON());
+                        commandFiles.forEach(file => {
+                            const filePath = path.join(categoryPath, file);
+                            
+                            // Clear require cache untuk reload command
+                            delete require.cache[require.resolve(filePath)];
+                            
+                            try {
+                                const command = require(filePath);
+                                if ('data' in command && 'execute' in command) {
+                                    commands.push(command.data.toJSON());
+                                }
+                            } catch (error) {
+                                console.error(`Error loading command ${filePath}:`, error);
                             }
-                        } catch (error) {
-                            // Error loading command
-                        }
-                    });
-                }
-            });
+                        });
+                    }
+                });
+            }
+            
+            // Load commands from features directory
+            if (fs.existsSync(this.featuresPath)) {
+                const featureDirectories = fs.readdirSync(this.featuresPath);
+                
+                featureDirectories.forEach(featureDir => {
+                    const featurePath = path.join(this.featuresPath, featureDir);
+                    const featureCommandsPath = path.join(featurePath, 'commands');
+                    
+                    if (fs.existsSync(featureCommandsPath) && fs.lstatSync(featureCommandsPath).isDirectory()) {
+                        const commandFiles = fs.readdirSync(featureCommandsPath).filter(file => file.endsWith('.js'));
+                        
+                        commandFiles.forEach(file => {
+                            const filePath = path.join(featureCommandsPath, file);
+                            
+                            // Clear require cache untuk reload command
+                            delete require.cache[require.resolve(filePath)];
+                            
+                            try {
+                                const command = require(filePath);
+                                if ('data' in command && 'execute' in command) {
+                                    commands.push(command.data.toJSON());
+                                }
+                            } catch (error) {
+                                console.error(`Error loading command ${filePath}:`, error);
+                            }
+                        });
+                    }
+                });
+            }
         } catch (error) {
-            // Error loading commands
+            console.error('Error loading commands:', error);
         }
         
         return commands;
@@ -127,36 +212,52 @@ class AutoDeploy {
         this.lastDeployTime = now;
 
         try {
-            // Validate config
-            if (!config.token || !config.clientId) {
+            // Validate config - skip token validation for debugging
+            if (!config.clientId) {
+                console.error('Missing CLIENT_ID');
                 return false;
             }
 
             const commands = this.loadCommands();
+            console.log(`Loaded ${commands.length} commands:`, commands.map(c => c.name));
+            
             if (commands.length === 0) {
+                console.error('No commands loaded');
                 return false;
+            }
+
+            // Skip actual deployment if no token
+            if (!config.token) {
+                console.log('No token provided - skipping actual deployment');
+                console.log('Commands that would be deployed:', commands.map(c => c.name));
+                return true;
             }
 
             const rest = new REST().setToken(config.token);
 
             let data;
             if (type === 'guild' && config.guildId) {
+                console.log(`Deploying ${commands.length} commands to guild ${config.guildId}`);
                 data = await rest.put(
                     Routes.applicationGuildCommands(config.clientId, config.guildId),
                     { body: commands }
                 );
             } else {
+                console.log(`Deploying ${commands.length} commands globally`);
                 data = await rest.put(
                     Routes.applicationCommands(config.clientId),
                     { body: commands }
                 );
             }
 
+            console.log(`Successfully deployed ${data.length} commands`);
+            
             // Update command hashes setelah deploy berhasil
             this.updateCommandHashes();
             return true;
 
         } catch (error) {
+            console.error('Deploy error:', error);
             return false;
         } finally {
             this.isDeploying = false;
