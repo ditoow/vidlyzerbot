@@ -13,8 +13,11 @@ class MusicSystem {
         this.musicPlayer = new Player(client, {
             ytdlOptions: {
                 quality: 'highestaudio',
-                highWaterMark: 1 << 25
-            }
+                highWaterMark: 1 << 25,
+                filter: 'audioonly'
+            },
+            skipFFmpeg: false,
+            useLegacyFFmpeg: false
         });
 
         // Radio player for 24/7 streaming
@@ -309,7 +312,9 @@ class MusicSystem {
                 metadata: {
                     title: station.name,
                     station: station
-                }
+                },
+                inputType: 'arbitrary',
+                inlineVolume: true
             });
 
             this.radioPlayer.play(resource);
