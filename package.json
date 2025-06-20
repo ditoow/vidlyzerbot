@@ -18,7 +18,11 @@
     "auto-deploy:guild": "node scripts/auto-deploy-standalone.js guild",
     "auto-deploy:global": "node scripts/auto-deploy-standalone.js global",
     "pterodactyl:simple": "node pterodactyl/start-simple.js",
-    "pterodactyl:advanced": "node pterodactyl/start-advanced.js"
+    "pterodactyl:advanced": "node pterodactyl/start-advanced.js",
+    "deploy:music": "node scripts/deploy-music-commands.js",
+    "deploy:music:global": "node scripts/deploy-music-commands.js --scope global",
+    "clear:music": "node scripts/deploy-music-commands.js --clear",
+    "clear:music:global": "node scripts/deploy-music-commands.js --clear --scope global"
   },
   "keywords": [
     "discord",
@@ -30,7 +34,17 @@
   "dependencies": {
     "axios": "^1.10.0",
     "discord.js": "^14.19.3",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "@discordjs/voice": "^0.16.1",
+    "discord-player": "^6.6.6",
+    "discord-player-youtubei": "^1.2.4",
+    "ytdl-core": "^4.11.5",
+    "play-dl": "^1.9.7",
+    "ffmpeg-static": "^5.2.0",
+    "sodium": "^3.0.2",
+    "libsodium-wrappers": "^0.7.11",
+    "node-opus": "^0.3.3",
+    "opusscript": "^0.0.8"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
