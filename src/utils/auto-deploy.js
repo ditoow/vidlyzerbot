@@ -212,52 +212,36 @@ class AutoDeploy {
         this.lastDeployTime = now;
 
         try {
-            // Validate config - skip token validation for debugging
-            if (!config.clientId) {
-                console.error('Missing CLIENT_ID');
+            // Validate config
+            if (!config.token || !config.clientId) {
                 return false;
             }
 
             const commands = this.loadCommands();
-            console.log(`Loaded ${commands.length} commands:`, commands.map(c => c.name));
-            
             if (commands.length === 0) {
-                console.error('No commands loaded');
                 return false;
-            }
-
-            // Skip actual deployment if no token
-            if (!config.token) {
-                console.log('No token provided - skipping actual deployment');
-                console.log('Commands that would be deployed:', commands.map(c => c.name));
-                return true;
             }
 
             const rest = new REST().setToken(config.token);
 
             let data;
             if (type === 'guild' && config.guildId) {
-                console.log(`Deploying ${commands.length} commands to guild ${config.guildId}`);
                 data = await rest.put(
                     Routes.applicationGuildCommands(config.clientId, config.guildId),
                     { body: commands }
                 );
             } else {
-                console.log(`Deploying ${commands.length} commands globally`);
                 data = await rest.put(
                     Routes.applicationCommands(config.clientId),
                     { body: commands }
                 );
             }
 
-            console.log(`Successfully deployed ${data.length} commands`);
-            
             // Update command hashes setelah deploy berhasil
             this.updateCommandHashes();
             return true;
 
         } catch (error) {
-            console.error('Deploy error:', error);
             return false;
         } finally {
             this.isDeploying = false;

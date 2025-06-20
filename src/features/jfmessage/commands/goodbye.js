@@ -1,14 +1,14 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const welcomeTemplate = require('../welcome-embed.json');
+const goodbyeTemplate = require('../goodbye-embed.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('welcome')
-        .setDescription('Test welcome message')
+        .setName('goodbye')
+        .setDescription('Test goodbye message')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('test')
-                .setDescription('Test welcome message dengan user saat ini')
+                .setDescription('Test goodbye message dengan user saat ini')
         ),
 
     async execute(interaction) {
@@ -27,6 +27,11 @@ async function handleTest(interaction) {
         const member = interaction.member;
         const guild = interaction.guild;
         
+        // Calculate time in server
+        const joinedDate = member.joinedAt;
+        const now = new Date();
+        const timeInServer = joinedDate ? Math.floor((now - joinedDate) / (1000 * 60 * 60 * 24)) : 0;
+        
         // Replace placeholders
         const replacePlaceholders = (text) => {
             if (typeof text !== 'string') return text;
@@ -38,7 +43,8 @@ async function handleTest(interaction) {
                 .replace(/{server}/g, guild.name)
                 .replace(/{membercount}/g, guild.memberCount.toString())
                 .replace(/{account_created}/g, `<t:${Math.floor(user.createdTimestamp / 1000)}:D>`)
-                .replace(/{joined_date}/g, member.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:D>` : 'Unknown')
+                .replace(/{joined_date}/g, joinedDate ? `<t:${Math.floor(joinedDate.getTime() / 1000)}:D>` : 'Unknown')
+                .replace(/{time_in_server}/g, `${timeInServer} hari`)
                 .replace(/{date}/g, new Date().toLocaleDateString('id-ID'))
                 .replace(/{user_avatar}/g, user.displayAvatarURL({ dynamic: true, size: 256 }))
                 .replace(/{server_icon}/g, guild.iconURL({ dynamic: true, size: 256 }) || '');
@@ -46,21 +52,21 @@ async function handleTest(interaction) {
 
         // Create embed
         const embed = new EmbedBuilder()
-            .setTitle(replacePlaceholders(welcomeTemplate.title))
-            .setDescription(replacePlaceholders(welcomeTemplate.description))
-            .setColor(welcomeTemplate.color);
+            .setTitle(replacePlaceholders(goodbyeTemplate.title))
+            .setDescription(replacePlaceholders(goodbyeTemplate.description))
+            .setColor(goodbyeTemplate.color);
 
         // Set thumbnail
-        if (welcomeTemplate.thumbnail) {
-            const thumbnailUrl = replacePlaceholders(welcomeTemplate.thumbnail);
+        if (goodbyeTemplate.thumbnail) {
+            const thumbnailUrl = replacePlaceholders(goodbyeTemplate.thumbnail);
             if (thumbnailUrl && thumbnailUrl !== '{user_avatar}') {
                 embed.setThumbnail(thumbnailUrl);
             }
         }
 
         // Add fields
-        if (welcomeTemplate.fields && Array.isArray(welcomeTemplate.fields)) {
-            welcomeTemplate.fields.forEach(field => {
+        if (goodbyeTemplate.fields && Array.isArray(goodbyeTemplate.fields)) {
+            goodbyeTemplate.fields.forEach(field => {
                 embed.addFields({
                     name: replacePlaceholders(field.name),
                     value: replacePlaceholders(field.value),
@@ -70,9 +76,9 @@ async function handleTest(interaction) {
         }
 
         // Set footer
-        if (welcomeTemplate.footer) {
-            const footerText = replacePlaceholders(welcomeTemplate.footer.text);
-            const footerIcon = replacePlaceholders(welcomeTemplate.footer.icon_url);
+        if (goodbyeTemplate.footer) {
+            const footerText = replacePlaceholders(goodbyeTemplate.footer.text);
+            const footerIcon = replacePlaceholders(goodbyeTemplate.footer.icon_url);
             
             embed.setFooter({
                 text: footerText,
@@ -81,20 +87,20 @@ async function handleTest(interaction) {
         }
 
         // Set timestamp
-        if (welcomeTemplate.timestamp) {
+        if (goodbyeTemplate.timestamp) {
             embed.setTimestamp();
         }
 
         // Send the embed
         await interaction.reply({
-            content: `🧪 **Test Welcome Message:**`,
+            content: `🧪 **Test Goodbye Message:**`,
             embeds: [embed]
         });
 
     } catch (error) {
-        console.error('Error in welcome test:', error);
+        console.error('Error in goodbye test:', error);
         await interaction.reply({
-            content: `❌ Error saat mengirim test welcome message: ${error.message}`,
+            content: `❌ Error saat mengirim test goodbye message: ${error.message}`,
             ephemeral: true
         });
     }

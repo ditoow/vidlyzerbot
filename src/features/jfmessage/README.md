@@ -1,6 +1,6 @@
 # 🎉 JF Message - Welcome & Goodbye System
 
-Sistem welcome dan goodbye message yang lengkap dengan embed yang menarik dan customizable.
+Sistem welcome dan goodbye message sederhana dengan embed yang menarik dan customizable melalui file JSON.
 
 ## 🚀 Fitur
 
@@ -10,181 +10,122 @@ Sistem welcome dan goodbye message yang lengkap dengan embed yang menarik dan cu
 - Informasi user (tag, ID, tanggal join)
 - Statistik server (jumlah member)
 - Tips untuk member baru
-- Customizable message dan warna
+- Template dapat diubah melalui file JSON
 
 ### ✅ **Goodbye Messages**
 - Embed farewell yang elegan
 - Informasi user yang keluar
 - Lama waktu di server
 - Statistik member yang tersisa
-- Customizable message dan warna
-
-### ✅ **Customization**
-- Custom welcome/goodbye message dengan placeholder
-- Custom warna embed
-- Toggle show/hide avatar
-- Toggle show/hide member count
-- Separate channel untuk welcome dan goodbye
+- Template dapat diubah melalui file JSON
 
 ## 📋 Commands
 
 ### `/welcome test`
-Test welcome atau goodbye message dengan user saat ini
-- **Options:**
-  - `type`: welcome atau goodbye
+Test welcome message dengan user saat ini
 
-### `/welcome setup`
-Setup channel untuk welcome/goodbye message
-- **Options:**
-  - `welcome-channel`: Channel untuk welcome message
-  - `goodbye-channel`: Channel untuk goodbye message
+**Contoh penggunaan:**
+```
+/welcome test
+```
 
-### `/welcome toggle`
-Enable/disable welcome atau goodbye message
-- **Options:**
-  - `type`: welcome atau goodbye
-  - `enabled`: true/false
+### `/goodbye test`
+Test goodbye message dengan user saat ini
 
-### `/welcome message`
-Ubah pesan welcome/goodbye
-- **Options:**
-  - `type`: welcome atau goodbye
-  - `message`: Pesan baru dengan placeholder
-
-### `/welcome settings`
-Ubah pengaturan tampilan
-- **Options:**
-  - `welcome-color`: Warna embed welcome (hex)
-  - `goodbye-color`: Warna embed goodbye (hex)
-  - `show-avatar`: Tampilkan avatar
-  - `show-member-count`: Tampilkan jumlah member
-  - `show-welcome-image`: Tampilkan gambar welcome (disabled)
-
-### `/welcome status`
-Lihat status dan pengaturan welcome system
+**Contoh penggunaan:**
+```
+/goodbye test
+```
 
 ## 🎨 Placeholder Variables
 
-Gunakan placeholder berikut dalam custom message:
+Gunakan placeholder berikut dalam template JSON:
 
 - `{user}` - Mention user (@username)
 - `{username}` - Username tanpa mention
+- `{user_id}` - ID user
 - `{server}` - Nama server
 - `{membercount}` - Jumlah total member
-
-**Contoh:**
-```
-Selamat datang {user} di **{server}**! 🎉
-Kamu adalah member ke-{membercount}!
-```
-
-## 🎯 Default Settings
-
-```javascript
-{
-    welcomeEnabled: true,
-    goodbyeEnabled: true,
-    welcomeChannel: null,
-    goodbyeChannel: null,
-    welcomeMessage: 'Selamat datang {user} di **{server}**! 🎉',
-    goodbyeMessage: 'Selamat tinggal {user}! Terima kasih telah bergabung di **{server}** 👋',
-    welcomeColor: '#00ff00',
-    goodbyeColor: '#ff0000',
-    showMemberCount: true,
-    showAvatar: true,
-    showWelcomeImage: true
-}
-```
-
-## 🔧 Setup Guide
-
-### 1. Setup Channels
-```
-/welcome setup welcome-channel:#welcome goodbye-channel:#goodbye
-```
-
-### 2. Customize Messages
-```
-/welcome message type:welcome message:Halo {user}! Selamat datang di {server}! 🎊
-/welcome message type:goodbye message:Dadah {user}! Sampai jumpa lagi! 👋
-```
-
-### 3. Customize Colors
-```
-/welcome settings welcome-color:#7289da goodbye-color:#f04747
-```
-
-### 4. Test Messages
-```
-/welcome test type:welcome
-/welcome test type:goodbye
-```
+- `{account_created}` - Tanggal akun dibuat (Discord timestamp)
+- `{joined_date}` - Tanggal join server (Discord timestamp)
+- `{time_in_server}` - Lama waktu di server (dalam hari)
+- `{date}` - Tanggal saat ini
+- `{user_avatar}` - URL avatar user
+- `{server_icon}` - URL icon server
 
 ## 📁 File Structure
 
 ```
 src/features/jfmessage/
-├── welcome-manager.js      # Core welcome system logic
+├── welcome-embed.json     # Template embed untuk welcome message
+├── goodbye-embed.json     # Template embed untuk goodbye message
 ├── commands/
-│   └── welcome.js         # Slash command handler
+│   ├── welcome.js         # Command /welcome test
+│   └── goodbye.js         # Command /goodbye test
 ├── events/
-│   ├── guildMemberAdd.js  # Welcome event handler
-│   └── guildMemberRemove.js # Goodbye event handler
+│   ├── guildMemberAdd.js  # Event handler ketika user join
+│   └── guildMemberRemove.js # Event handler ketika user leave
 └── README.md              # Documentation
 ```
 
-## 🎨 Embed Design
+## 🎨 Kustomisasi Template
 
-### Welcome Embed
-- **Title:** 🎉 Welcome to [Server Name]!
-- **Author:** Username dengan avatar
-- **Thumbnail:** User avatar
-- **Color:** Customizable (default: green)
-- **Fields:**
-  - 👤 User Information
-  - 📊 Server Stats
-  - 📅 Account Info
-  - 💡 Getting Started Tips
+### Welcome Template
+Edit file `welcome-embed.json` untuk mengubah template welcome message:
+```json
+{
+  "title": "🎉 Selamat Datang di {server}!",
+  "description": "Pesan welcome custom...",
+  "color": "#00ff88",
+  "thumbnail": "{user_avatar}",
+  "fields": [...],
+  "footer": {...},
+  "timestamp": true
+}
+```
 
-### Goodbye Embed
-- **Title:** 👋 Goodbye from [Server Name]
-- **Author:** Username dengan avatar
-- **Thumbnail:** User avatar
-- **Color:** Customizable (default: red)
-- **Fields:**
-  - 👤 User Information
-  - 📊 Server Stats
-  - ⏰ Time in Server
+### Goodbye Template
+Edit file `goodbye-embed.json` untuk mengubah template goodbye message:
+```json
+{
+  "title": "👋 Selamat Tinggal dari {server}",
+  "description": "Pesan goodbye custom...",
+  "color": "#ff4444",
+  "thumbnail": "{user_avatar}",
+  "fields": [...],
+  "footer": {...},
+  "timestamp": true
+}
+```
 
-## 🔮 Future Features
+## 🔧 Setup Guide
 
-- [ ] Welcome card image generation (canvas)
-- [ ] Role assignment on join
-- [ ] Welcome DM messages
-- [ ] Multiple welcome channels
-- [ ] Scheduled welcome messages
-- [ ] Welcome message templates
-- [ ] Analytics dashboard
+### 1. Test Messages
+```
+/welcome test
+/goodbye test
+```
+
+### 2. Kustomisasi Template
+Edit file `src/features/jfmessage/welcome-embed.json` dan `goodbye-embed.json` sesuai kebutuhan
+
+### 3. Channel Detection
+Bot akan otomatis mencari channel dengan nama:
+- **Welcome:** `welcome`, `general`, `chat`
+- **Goodbye:** `goodbye`, `farewell`, `general`, `chat`
+
+## 🎊 Cara Kerja
+
+1. **User Join:** Event `guildMemberAdd` akan trigger dan mengirim welcome message
+2. **User Leave:** Event `guildMemberRemove` akan trigger dan mengirim goodbye message
+3. **Test Commands:** `/welcome test` dan `/goodbye test` untuk preview message tanpa perlu user join/leave
 
 ## 🛠️ Technical Notes
 
-- Events automatically loaded by enhanced event handler
-- Commands automatically loaded by enhanced command handler
-- Memory-based settings (consider database for persistence)
-- Modular design for easy extension
-- Error handling for missing channels/permissions
-
-## 🎊 Usage Examples
-
-### Basic Setup
-1. Run `/welcome setup` to set channels
-2. Test with `/welcome test type:welcome`
-3. Customize messages and colors as needed
-
-### Advanced Customization
-1. Create custom messages with placeholders
-2. Set different colors for welcome/goodbye
-3. Toggle features on/off as needed
-4. Monitor with `/welcome status`
+- Events otomatis loaded oleh enhanced event handler
+- Commands otomatis loaded oleh enhanced command handler
+- Template disimpan dalam file JSON untuk kemudahan editing
+- Automatic channel detection berdasarkan nama channel
+- Error handling untuk missing channels/permissions
 
 **Sistem welcome message siap digunakan!** 🚀

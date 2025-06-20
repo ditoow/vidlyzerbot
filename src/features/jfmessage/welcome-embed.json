@@ -1,0 +1,28 @@
+{
+  "title": "🎉 Selamat Datang di {server}!",
+  "description": "Halo {user}! Selamat datang di server **{server}**!\n\nKami senang kamu bergabung dengan komunitas kami. Jangan lupa untuk membaca rules dan berkenalan dengan member lainnya!",
+  "color": "#00ff88",
+  "thumbnail": "{user_avatar}",
+  "fields": [
+    {
+      "name": "👤 Informasi User",
+      "value": "**Username:** {username}\n**User ID:** {user_id}\n**Account Created:** {account_created}",
+      "inline": true
+    },
+    {
+      "name": "📊 Server Stats",
+      "value": "**Total Members:** {membercount}\n**Kamu adalah member ke:** {membercount}",
+      "inline": true
+    },
+    {
+      "name": "💡 Tips untuk Member Baru",
+      "value": "• Baca channel #rules terlebih dahulu\n• Perkenalkan diri di #introductions\n• Jangan spam dan hormati sesama member\n• Have fun! 🎊",
+      "inline": false
+    }
+  ],
+  "footer": {
+    "text": "Welcome to {server} • {date}",
+    "icon_url": "{server_icon}"
+  },
+  "timestamp": true
+}

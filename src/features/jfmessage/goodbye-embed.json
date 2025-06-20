@@ -1,0 +1,28 @@
+{
+  "title": "👋 Selamat Tinggal dari {server}",
+  "description": "**{username}** telah meninggalkan server.\n\nTerima kasih telah menjadi bagian dari komunitas kami. Semoga kita bisa bertemu lagi di lain waktu!",
+  "color": "#ff4444",
+  "thumbnail": "{user_avatar}",
+  "fields": [
+    {
+      "name": "👤 Informasi User",
+      "value": "**Username:** {username}\n**User ID:** {user_id}\n**Joined Server:** {joined_date}",
+      "inline": true
+    },
+    {
+      "name": "📊 Server Stats",
+      "value": "**Members Remaining:** {membercount}\n**Time in Server:** {time_in_server}",
+      "inline": true
+    },
+    {
+      "name": "💭 Farewell Message",
+      "value": "Pintu server selalu terbuka jika kamu ingin kembali. Sampai jumpa! 🌟",
+      "inline": false
+    }
+  ],
+  "footer": {
+    "text": "Goodbye from {server} • {date}",
+    "icon_url": "{server_icon}"
+  },
+  "timestamp": true
+}
